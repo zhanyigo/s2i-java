@@ -2,14 +2,14 @@
    "kind": "List",
    "apiVersion": "v1",
    "metadata": {
-      "name": "springboot-sti"
+      "name": "springboot-s2i"
    },
    "items": [
       {
          "kind": "BuildConfig",
          "apiVersion": "v1",
          "metadata": {
-            "name": "springboot-sti"
+            "name": "springboot-s2i"
          },
          "spec": {
             "triggers": [
@@ -36,7 +36,7 @@
                   "uri": "https://github.com/jorgemoralespou/osev3-examples.git",
                   "ref": "master"
                },
-               "contextDir": "spring-boot/springboot-sti"
+               "contextDir": "spring-boot/springboot-s2i"
             },
             "strategy": {
                "type": "Docker",
@@ -50,7 +50,7 @@
             "output": {
                "to": {
                   "kind": "ImageStreamTag",
-                  "name": "springboot-sti:latest"
+                  "name": "springboot-s2i:latest"
                }
             },
             "resources": {}
@@ -70,7 +70,7 @@
          "kind": "ImageStream",
          "apiVersion": "v1",
          "metadata": {
-            "name": "springboot-sti"
+            "name": "springboot-s2i"
          },
          "spec": {
             "dockerImageRepository": "",
@@ -188,7 +188,7 @@
                      "sourceStrategy": {
                         "from": {
                            "kind": "ImageStreamTag",
-                           "name": "springboot-sti:latest"
+                           "name": "springboot-s2i:latest"
                         }
                      }
                   },
@@ -426,7 +426,7 @@
                      "sourceStrategy": {
                         "from": {
                            "kind": "ImageStreamTag",
-                           "name": "springboot-sti:latest"
+                           "name": "springboot-s2i:latest"
                         }
                      }
                   },
