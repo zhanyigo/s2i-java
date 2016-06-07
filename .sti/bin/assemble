@@ -27,6 +27,13 @@ fi
 # # TODO: Add build steps for your application, eg npm install, bundle install
 
 ##############################################################################
+#
+# BUILD ENVs:
+#   APP_SUFFIX = Jar file suffix of the application (e.g. xxxxx${APP_SUFFIX}.jar)
+#   BUILDER_ARGS = Builder arguments
+#
+# RUN ENVs:
+#   APP_OPTIONS = Options to pass to java command line
 
 # Source code provided to STI is at ${HOME}/source
 HOME=/opt/app-root/src
@@ -131,10 +138,12 @@ fi
 # fi
 
 # As SpringBoot you should only have 1 fat jar
-if [ $(ls /opt/openshift/*.jar | wc -l) -eq 1 ]; then
-  mv /opt/openshift/*.jar /opt/openshift/app.jar
-  [ ! -f /opt/openshift/app.jar ] && echo "Application could not be properly built." && exit 1 
-  echo "Application jar file is located in /opt/openshift/app.jar"
+if [ $(ls ${DEPLOY_DIR}/*${APP_SUFFIX}.jar | wc -l) -eq 1 ]; then
+  echo "[INFO] Copying ${DEPLOY_DIR}/*${APP_SUFFIX}.jar into ${DEPLOY_DIR}/app.jar"
+  mv ${DEPLOY_DIR}/*${APP_SUFFIX}.jar ${DEPLOY_DIR}/app.jar
+  [ ! -f ${DEPLOY_DIR}/app.jar ] && echo "Application could not be properly built." && exit 1
+  echo "[INFO] Application jar file is located in ${DEPLOY_DIR}/app.jar"
 else
+  echo "[ERROR] No app.jar file located in ${DEPLOY_DIR}"
   exit 1
 fi
