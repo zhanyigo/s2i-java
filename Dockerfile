@@ -1,4 +1,4 @@
-# springboot-sti
+# s2i-java
 FROM openshift/base-centos7
 MAINTAINER Jorge Morales <jmorales@redhat.com>
 
@@ -30,17 +30,17 @@ ENV PATH=/opt/maven/bin/:/opt/gradle/bin/:$PATH
 
 ENV BUILDER_VERSION 1.0
 
-LABEL io.k8s.description="Platform for building Spring Boot applications with maven or gradle" \
-      io.k8s.display-name="Spring Boot builder 1.0" \
+LABEL io.k8s.description="Platform for building Java (fatjar) applications with maven or gradle" \
+      io.k8s.display-name="Java S2I builder 1.0" \
       io.openshift.expose-services="8080:http" \
-      io.openshift.tags="builder,maven-3,gradle-2.6,springboot"
+      io.openshift.tags="builder,maven-3,gradle-2.6,java,microservices,fatjar"
 
 # TODO (optional): Copy the builder files into /opt/openshift
 # COPY ./<builder_folder>/ /opt/openshift/
 # COPY Additional files,configurations that we want to ship by default, like a default setting.xml
 
 LABEL io.openshift.s2i.scripts-url=image:///usr/local/sti
-COPY ./.sti/bin/ /usr/local/sti
+COPY ./sti/bin/ /usr/local/sti
 
 RUN chown -R 1001:1001 /opt/openshift
 

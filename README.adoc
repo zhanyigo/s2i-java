@@ -1,10 +1,12 @@
-== OpenShift S2I Builder for Spring Boot
-This Source-to-Image Builder let's you create projects targetting Spring Boot and built with:
+== OpenShift S2I Builder for Java
+This Source-to-Image Builder let's you create projects targetting Java OpenJDK 8 and built with:
 
 * maven
 * gradle
 
 NOTE: If a project has a pom.xml and a build.gradle, maven will take precedence
+
+This builder/runtime s2i image can be used with SpringBoot, Vert.X, Wildfly Swarm, DropWizard and many other microservices frameworks. 
 
 == BUILD ENV Options
 
@@ -36,13 +38,13 @@ BUILDER_ARGS="build -x test"
 * First load all the needed resources in a project.
 
 ----
-oc create -f https://raw.githubusercontent.com/jorgemoralespou/springboot-s2i/master/ose3/springboot-s2i-imagestream.json
+oc create -f https://raw.githubusercontent.com/jorgemoralespou/s2i-java/master/ose3/s2i-java-imagestream.json
 ----
 
-* Once the builder springboot-s2i has been registered, you can create an app with:
+* Once the builder s2i-java has been registered, you can create an app with:
 
 ** Instant app already provided as template
-** Using the springboot-s2i builder image using a regular Git repository
+** Using the s2i-java builder image using a regular Git repository
 
 == Samples
 There is a lot of example SpringBoot applications https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples[here]
