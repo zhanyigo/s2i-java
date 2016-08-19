@@ -1,6 +1,6 @@
-#!/bin/bash -e
-#
-# S2I assemble script for the 's2i-java' image.
+#!/bin/bash -
+
+## S2I assemble script for the 's2i-java' image.
 # The 'assemble' script builds your application source ready to run.
 #
 # For more information refer to the documentation:
@@ -81,7 +81,11 @@ if [ -f "$LOCAL_SOURCE_DIR/pom.xml" ]; then
 
   # Copy built artifacts (if any!) from the target/ directory
   # to the $DEPLOY_DIR directory for later deployment
-  copy_artifacts target
+  if [ "${PROJECT}" == "" ]; then
+    copy_artifacts ${PROJECT}/target
+  else
+    copy_artifacts target
+  fi
 
   # clean up after maven
   mvn clean
