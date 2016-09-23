@@ -1,6 +1,7 @@
 # s2i-java
 FROM openshift/base-centos7
 MAINTAINER Jorge Morales <jmorales@redhat.com>
+# HOME in base image is /opt/app-root/src
 
 # Install build tools on top of base image
 # Java jdk 8, Maven 3.3, Gradle 2.6
@@ -17,7 +18,8 @@ ENV MAVEN_VERSION 3.3.9
 RUN (curl -0 http://www.eu.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | \
     tar -zx -C /usr/local) && \
     mv /usr/local/apache-maven-$MAVEN_VERSION /usr/local/maven && \
-    ln -sf /usr/local/maven/bin/mvn /usr/local/bin/mvn
+    ln -sf /usr/local/maven/bin/mvn /usr/local/bin/mvn && \
+    mkdir -p $HOME/.m2 && chmod -R a+rwX $HOME/.m2
 
 ENV GRADLE_VERSION 2.6
 RUN curl -sL -0 https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o /tmp/gradle-${GRADLE_VERSION}-bin.zip && \
@@ -38,6 +40,7 @@ LABEL io.k8s.description="Platform for building Java (fatjar) applications with 
 # TODO (optional): Copy the builder files into /opt/openshift
 # COPY ./<builder_folder>/ /opt/openshift/
 # COPY Additional files,configurations that we want to ship by default, like a default setting.xml
+COPY ./contrib/settings.xml $HOME/.m2/
 
 LABEL io.openshift.s2i.scripts-url=image:///usr/local/sti
 COPY ./sti/bin/ /usr/local/sti
