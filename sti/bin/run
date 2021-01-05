@@ -7,8 +7,54 @@
 #	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
 #
 
+HOME=/opt/openshift
+
+TEST_MODE="${TEST_MODE:-0}"
+JAVA_MAX_PERCENTAGE=${JAVA_MAX_PERCENTAGE:-85.00}
+JACOCO_SERVER_HOST="${JACOCO_SERVER_HOST:-jacoco-report-server.svc}"
+JACOCO_SERVER_PORT="${JACOCO_SERVER_PORT:-5300}"
+JACOCO_SERVER_USER="${JACOCO_SERVER_USER:-jacoco}"
+JACOCO_SERVER_DEBUGINFO_PATH="${JACOCO_SERVER_DEBUGINFO_PATH:-/home/jacoco/debuginfo}"
+
+JVM_OPTS=" -XX:OnOutOfMemoryError='kill -9 %p' -XX:+PrintFlagsFinal -XX:+UseContainerSupport -XX:MaxRAMPercentage=$JAVA_MAX_PERCENTAGE "
+
+JAVA_OPTS=${JAVA_OPTS:""}
+
+if [ "$TEST_MODE" == "1" ]; then
+    if [ "x$JACOCO_SESSION_ID" == "x" ]; then
+        echo "JACOCO_SESSION_ID is null."
+        exit -1;
+    fi
+
+    if [ -f $HOME/.ssh/id_rsa ]; then
+       chmod 400 $HOME/.ssh/id_rsa
+    else
+       echo "$HOME/.ssh/id_rsa not exists."
+       exit -1;
+    fi
+
+    if [ -f $HOME/.ssh/id_rsh.pub ]; then
+       chmod 644 $HOME/.ssh/id_rsa.pub
+    else
+       echo "$HOME/.ssh/id_rsa.pub  not exists."
+       exit -1;
+    fi
+
+    echo "JACOCO_SERVER_HOST=$JACOCO_SERVER_HOST"
+    echo "JACOCO_SERVER_PORT=$JACOCO_SERVER_PORT"
+    echo "JACOCO_SERVER_USER=$JACOCO_SERVER_USER"
+    echo "JACOCO_SERVER_DEBUGINFO_PATH=$JACOCO_SERVER_DEBUGINFO_PATH"
+
+    scp -i $HOME/.ssh/ssh_id  -r -p /opt/openshift/classes /opt/openshift/source $JACOCO_SERVER_USER@$JACOCO_SERVER_HOST:$JACOCO_SERVER_DEBUGINFO_PATH/$JACOCO_SESSION_ID
+
+    JAVA_OPTS=" -javaagent:${JACOCO_AGENT}=output=tcpclient,address=$JACOCO_SERVER_HOST,port=$JACOCO_SERVER_PORT,sessionid=$JACOCO_SESSION_ID,excludes=*.scf.*:*.entity.*:*.entities.* $JAVA_OPTS $JVM_OPTS "
+fi
+
+export JAVA_OPTS;
+
 cd /opt/openshift && \
 exec java \
     -Djava.security.egd=file:/dev/./urandom \
+    $JAVA_OPTS \
     -jar /opt/openshift/app.jar \
     $APP_OPTIONS
