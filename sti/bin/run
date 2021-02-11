@@ -13,7 +13,7 @@ TEST_MODE="${TEST_MODE:-0}"
 JAVA_MAX_PERCENTAGE=${JAVA_MAX_PERCENTAGE:-85.00}
 JACOCO_SERVER_DEBUGINFO_PATH="${JACOCO_SERVER_DEBUGINFO_PATH:-/opt/openshift/jacoco/debuginfo}"
 
-JVM_OPTS= -XX:OnOutOfMemoryError="kill -9 %p" -XX:+PrintFlagsFinal -XX:+UseContainerSupport -XX:MaxRAMPercentage=$JAVA_MAX_PERCENTAGE
+JVM_OPTS="-XX:OnOutOfMemoryError=\"kill -9 %p\" -XX:+PrintFlagsFinal -XX:+UseContainerSupport -XX:MaxRAMPercentage=$JAVA_MAX_PERCENTAGE"
 
 JAVA_OPTS=${JAVA_OPTS:""}
 
