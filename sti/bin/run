@@ -13,8 +13,6 @@ TEST_MODE="${TEST_MODE:-0}"
 JAVA_MAX_PERCENTAGE=${JAVA_MAX_PERCENTAGE:-85.00}
 JACOCO_SERVER_DEBUGINFO_PATH="${JACOCO_SERVER_DEBUGINFO_PATH:-/opt/openshift/jacoco/debuginfo}"
 
-JVM_OPTS="-XX:OnOutOfMemoryError='kill -9 %p' -XX:+PrintFlagsFinal -XX:+UseContainerSupport -XX:MaxRAMPercentage=$JAVA_MAX_PERCENTAGE"
-
 JAVA_OPTS=${JAVA_OPTS:""}
 
 if [ "$TEST_MODE" == "1" ]; then
@@ -42,11 +40,10 @@ export JAVA_OPTS;
 
 cd /opt/openshift && \
 exec java \
-    -Djava.security.egd=file:/dev/./urandom \
-    $JAVA_OPTS $JVM_OPTS \
+    $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom \
+    -XX:OnOutOfMemoryError="kill -9 %p" -XX:+PrintFlagsFinal -XX:+UseContainerSupport -XX:MaxRAMPercentage=$JAVA_MAX_PERCENTAGE \
     -jar /opt/openshift/app.jar \
     $APP_OPTIONS
-
 
 echo "Main application exited."
 
