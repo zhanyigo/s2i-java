@@ -7,12 +7,9 @@
 #	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
 #
 
-HOME=/opt/openshift
-
 TEST_MODE="${TEST_MODE:-0}"
-JAVA_MAX_PERCENTAGE=${JAVA_MAX_PERCENTAGE:-85.00}
-JACOCO_SERVER_DEBUGINFO_PATH="${JACOCO_SERVER_DEBUGINFO_PATH:-/opt/openshift/jacoco/debuginfo}"
-
+JAVA_MAX_RAM_PERCENTAGE=${JAVA_MAX_RAM_PERCENTAGE:-85.00}
+JACOCO_OUTPUT_PATH="${JACOCO_OUTPUT_PATH:-/opt/openshift/jacoco}"
 JAVA_OPTS=${JAVA_OPTS:""}
 
 if [ "$TEST_MODE" == "1" ]; then
@@ -21,19 +18,19 @@ if [ "$TEST_MODE" == "1" ]; then
         exit -1;
     fi
 
-    echo "JACOCO_SERVER_DEBUGINFO_PATH=$JACOCO_SERVER_DEBUGINFO_PATH"
+    echo "JACOCO_OUTPUT_PATH=$JACOCO_OUTPUT_PATH"
 
-    if [ ! -d "$JACOCO_SERVER_DEBUGINFO_PATH/$sessionid" ]; then
-        echo "mkdir $JACOCO_SERVER_DEBUGINFO_PATH/$sessionid ..."
-        mkdir -p $JACOCO_SERVER_DEBUGINFO_PATH/$sessionid
+    if [ ! -d "$JACOCO_OUTPUT_PATH/$sessionid" ]; then
+        echo "mkdir $JACOCO_OUTPUT_PATH/$sessionid ..."
+        mkdir -p $JACOCO_OUTPUT_PATH/$sessionid
     fi
 
-    echo "Copy source code to: $JACOCO_SERVER_DEBUGINFO_PATH/$sessionid"
-    cp -r /opt/openshift/source $JACOCO_SERVER_DEBUGINFO_PATH/$sessionid
-    echo "Copy classes to: $JACOCO_SERVER_DEBUGINFO_PATH/$sessionid"
-    cp -r /opt/openshift/classes $JACOCO_SERVER_DEBUGINFO_PATH/$sessionid
+    echo "Copy source code to: $JACOCO_OUTPUT_PATH/$sessionid"
+    cp -r /opt/openshift/source $JACOCO_OUTPUT_PATH/$sessionid
+    echo "Copy classes to: $JACOCO_OUTPUT_PATH/$sessionid"
+    cp -r /opt/openshift/classes $JACOCO_OUTPUT_PATH/$sessionid
 
-    JAVA_OPTS=" -javaagent:${JACOCO_AGENT}=output=file,append=true,destfile=$JACOCO_SERVER_DEBUGINFO_PATH/$sessionid/jacoco.exec,sessionid=$JACOCO_SESSION_ID,excludes=*.scf.*:*.entity.*:*.entities.* $JAVA_OPTS"
+    JAVA_OPTS=" -javaagent:${JACOCO_AGENT}=output=file,append=true,destfile=$JACOCO_OUTPUT_PATH/$sessionid/jacoco.exec,sessionid=$JACOCO_SESSION_ID,excludes=*.scf.*:*.entity.*:*.entities.* $JAVA_OPTS"
 fi
 
 export JAVA_OPTS;
@@ -41,15 +38,8 @@ export JAVA_OPTS;
 cd /opt/openshift && \
 exec java \
     $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom \
-    -XX:OnOutOfMemoryError="kill -9 %p" -XX:+PrintFlagsFinal -XX:+UseContainerSupport -XX:MaxRAMPercentage=$JAVA_MAX_PERCENTAGE \
+    -XX:OnOutOfMemoryError="kill -9 %p" -XX:+PrintFlagsFinal -XX:+UseContainerSupport -XX:MaxRAMPercentage=$JAVA_MAX_RAM_PERCENTAGE \
     -jar /opt/openshift/app.jar \
     $APP_OPTIONS
 
 echo "Main application exited."
-
-if [ "$TEST_MODE" == "1" ]; then
-    java -jar $JACOCO_CLI report $JACOCO_SERVER_DEBUGINFO_PATH/sessionid/jacoco.exec \
-        --classfiles $JACOCO_SERVER_DEBUGINFO_PATH/$sessionid/classes/source \
-        --sourcefiles  --name $sessionid --encoding UTF-8 \
-        --html destfile=$JACOCO_SERVER_DEBUGINFO_PATH/$sessionid/index.html
-fi

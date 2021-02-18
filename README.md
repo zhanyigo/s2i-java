@@ -15,11 +15,11 @@ This builder/runtime s2i image can be used with SpringBoot, Vert.X, Wildfly Swar
 * BUILDER_ARGS: Allows you to specify options to pass to maven or gradle
 * MAVEN_MIRROR_URL: Allows configure mirror url
 
-## Defaults
+### Defaults
 
 If you do not specify any BUILDER_ARGS, by default the s2i image will use the following:
-
-### Maven
+`
+#### Maven
 
 ----
 
@@ -27,7 +27,7 @@ MAVEN_ARGS="package -Popenshift -DskipTests -Dcom.redhat.xpaas.repo.redhatga"
 
 ----
 
-### Gradle
+#### Gradle
 
 ----
 
@@ -35,6 +35,14 @@ BUILDER_ARGS="build -x test"
 
 ----
 
+## RUN ENV Options
+
+* APP_OPTIONS: Options to pass to *java -jar app.jar ${APP_OPTIONS}*
+* TEST_MODE: 0(default): Start jvm without Jacoco. 1: Start jvm with Jacoco.  
+* JAVA_MAX_RAM_PERCENTAGE: Max ram percentage of container.
+  * JVM will started with: -XX:OnOutOfMemoryError="kill -9 %p" -XX:+PrintFlagsFinal -XX:+UseContainerSupport -XX:MaxRAMPercentage=$JAVA_MAX_RAM_PERCENTAGE
+* JAVA_OPTS: Other java options.
+  
 ## Test in OpenShift
 
 * First load all the needed resources in a project.
