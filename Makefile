@@ -1,5 +1,5 @@
 
-IMAGE_NAME = s2i-java
+IMAGE_NAME = zhanyi/s2i-java
 
 build:
 	docker build -t $(IMAGE_NAME) .
