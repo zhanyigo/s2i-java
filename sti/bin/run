@@ -42,10 +42,8 @@ export JAVA_OPTS;
 cd /opt/openshift && \
 exec java \
     $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom \
-    -XX:OnOutOfMemoryError="kill -9 %p" -XX:+PrintFlagsFinal -XX:+UseContainerSupport \
+    -XX:OnOutOfMemoryError="kill -9 %p" -XX:+PrintFlagsFinal +XX:+PrintGCDetails -XX:+UseContainerSupport \
     -XX:MaxRAMPercentage=$JAVA_MAX_RAM_PERCENTAGE -XX:MinRAMPercentage=$JAVA_MIN_RAM_PERCENTAGE =XX:InitRAMPercentage=$JAVA_INIT_RAM_PERCENTAGE  \
     $APP_OPTIONS \
     -jar /opt/openshift/app.jar \
-    
 
-echo "Main application exited."
