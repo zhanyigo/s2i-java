@@ -24,15 +24,15 @@ if [ "$TEST_MODE" == "1" ]; then
 
     if [ ! -d "$JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID" ]; then
         echo "mkdir $JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID ..."
-        mkdir -p $JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID
+        mkdir -p "$JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID"
     fi
 
-    mkdir -p $JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID/source $JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID/classes
+    mkdir -p "$JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID/source" "$JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID/classes"
 
     echo "Copy source code to: $JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID"
-    cp -rf /opt/openshift/source/* $JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID/source
+    cp -rf /opt/openshift/source/* "$JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID/source"
     echo "Copy classes to: $JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID"
-    cp -rf /opt/openshift/classes/* $JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID/classes
+    cp -rf /opt/openshift/classes/* "$JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID/classes"
 
     JAVA_OPTS=" -javaagent:${JACOCO_AGENT}=output=file,append=true,destfile=$JACOCO_OUTPUT_PATH/$JACOCO_SESSION_ID/jacoco.exec,sessionid=$JACOCO_SESSION_ID,excludes=*.scf.*:*.entity.*:*.entities.* $JAVA_OPTS"
 fi
