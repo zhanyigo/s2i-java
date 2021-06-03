@@ -17,7 +17,7 @@ JAVA_OPTS=${JAVA_OPTS:""}
 if [ "$TEST_MODE" == "1" ]; then
     if [ "x$JACOCO_SESSION_ID" == "x" ]; then
         echo "JACOCO_SESSION_ID is null."
-        exit -1;
+        exit 1;
     fi
 
     echo "JACOCO_OUTPUT_PATH=$JACOCO_OUTPUT_PATH"
